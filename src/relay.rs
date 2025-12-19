@@ -1,4 +1,4 @@
-use crate::core::udp::UdpIO;
+use crate::udp::UdpIO;
 
 pub async fn relay(socket: &impl UdpIO, buffer: &mut [u8; 4096]) {
     if let Ok((size, metadata)) = socket.recv(buffer).await {
@@ -9,7 +9,7 @@ pub async fn relay(socket: &impl UdpIO, buffer: &mut [u8; 4096]) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core::udp::UdpIOSpy;
+    use crate::udp::UdpIOSpy;
     use embassy_net::udp::RecvError;
 
     #[tokio::test]

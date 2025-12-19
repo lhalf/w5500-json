@@ -1,6 +1,6 @@
 use embassy_net::Stack;
 use embassy_net::udp::{PacketMetadata, UdpSocket};
-use w5500_json::core::relay::relay;
+use w5500_json::relay::relay;
 
 pub async fn run(stack: Stack<'static>) -> ! {
     let mut rx_buf = [0; 4096];

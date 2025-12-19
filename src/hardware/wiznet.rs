@@ -1,4 +1,4 @@
-use crate::board::Board;
+use crate::hardware::board::Board;
 use crate::tasks::ethernet::ethernet_task;
 use embassy_executor::Spawner;
 use embassy_net_wiznet::chip::W5500;

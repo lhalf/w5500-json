@@ -1,11 +1,10 @@
 #![no_std]
 #![no_main]
 
-mod board;
-mod network;
-mod run;
+mod hardware;
 mod tasks;
-mod wiznet;
+
+use hardware::{board, network, run, wiznet};
 
 use embassy_executor::Spawner;
 use panic_halt as _;
