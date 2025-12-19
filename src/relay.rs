@@ -10,7 +10,9 @@ pub async fn relay<'a>(socket: &impl UdpIO<'a>, buffer: &'a mut [u8; 4096]) {
 mod tests {
     use super::*;
     use crate::udp::UdpIOSpy;
-    use embassy_net::udp::RecvError;
+    use core::net::Ipv4Addr;
+    use embassy_net::IpEndpoint;
+    use embassy_net::udp::{RecvError, UdpMetadata};
 
     #[tokio::test]
     async fn packet_too_large_for_buffer_causes_nothing_to_be_sent() {
@@ -26,5 +28,29 @@ mod tests {
         relay(&socket_spy, &mut buffer).await;
 
         assert!(socket_spy.send.arguments.is_empty());
+    }
+
+    #[tokio::test]
+    async fn valid_packets_are_echoed() {
+        let mut buffer = [0; 4096];
+
+        let socket_spy = UdpIOSpy::default();
+
+        let incoming_ip = Ipv4Addr::new(0, 0, 0, 0);
+
+        let metadata = UdpMetadata {
+            endpoint: IpEndpoint::new(incoming_ip.into(), 0),
+            local_address: None,
+            meta: Default::default(),
+        };
+
+        let data = b"{}".as_slice();
+
+        socket_spy.recv.returns.set([Ok((data, metadata))]);
+        socket_spy.send.returns.set([Ok(())]);
+
+        relay(&socket_spy, &mut buffer).await;
+
+        assert_eq!([(data.to_vec(), metadata)], socket_spy.send.arguments);
     }
 }
