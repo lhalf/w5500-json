@@ -1,6 +1,4 @@
 use crate::hardware::board::Board;
-use crate::tasks::ethernet::ethernet_task;
-use embassy_executor::Spawner;
 use embassy_net_wiznet::chip::W5500;
 use embassy_net_wiznet::{Device, State};
 use embassy_rp::gpio::{Input, Output};
@@ -20,10 +18,10 @@ pub type Runner = embassy_net_wiznet::Runner<
     Output<'static>,
 >;
 
-pub async fn init(spawner: &Spawner, board: Board) -> Device<'static> {
+pub async fn init(board: Board) -> (Device<'static>, Runner) {
     static STATE: StaticCell<State<8, 8>> = StaticCell::new();
 
-    let (device, runner) = embassy_net_wiznet::new(
+    embassy_net_wiznet::new(
         MAC_ADDRESS,
         STATE.init(State::new()),
         ExclusiveDevice::new(board.spi, board.cs, Delay).unwrap(),
@@ -31,9 +29,5 @@ pub async fn init(spawner: &Spawner, board: Board) -> Device<'static> {
         board.w5500_reset,
     )
     .await
-    .unwrap();
-
-    spawner.spawn(ethernet_task(runner)).unwrap();
-
-    device
+    .unwrap()
 }
