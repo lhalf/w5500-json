@@ -2,7 +2,7 @@ use embassy_net::Stack;
 use embassy_net::udp::{PacketMetadata, UdpSocket};
 use w5500_json::relay::relay;
 
-pub async fn run(stack: Stack<'static>) -> ! {
+pub async fn run(stack: Stack<'static>) {
     let mut rx_buf = [0; 4096];
     let mut tx_buf = [0; 4096];
     let mut rx_meta = [PacketMetadata::EMPTY; 16];

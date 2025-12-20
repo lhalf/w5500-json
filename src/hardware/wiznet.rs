@@ -1,4 +1,5 @@
 use crate::hardware::board::Board;
+use crate::hardware::error::Error;
 use embassy_net_wiznet::chip::W5500;
 use embassy_net_wiznet::{Device, State};
 use embassy_rp::gpio::{Input, Output};
@@ -18,7 +19,7 @@ pub type Runner = embassy_net_wiznet::Runner<
     Output<'static>,
 >;
 
-pub async fn init(board: Board) -> (Device<'static>, Runner) {
+pub async fn init(board: Board) -> Result<(Device<'static>, Runner), Error> {
     static STATE: StaticCell<State<8, 8>> = StaticCell::new();
 
     embassy_net_wiznet::new(
@@ -29,5 +30,5 @@ pub async fn init(board: Board) -> (Device<'static>, Runner) {
         board.w5500_reset,
     )
     .await
-    .unwrap()
+    .map_err(|_| Error::WiznetEthernet)
 }

@@ -4,18 +4,30 @@
 mod hardware;
 
 use embassy_executor::Spawner;
+use embassy_net::Stack;
+use hardware::error::Error;
 use hardware::run;
 use hardware::wiznet;
 use panic_halt as _;
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
-    let (stack, ethernet_runner, network_runner) = hardware::init().await;
-
-    spawner.spawn(ethernet_task(ethernet_runner)).unwrap();
-    spawner.spawn(network_task(network_runner)).unwrap();
-
+    let stack = setup(&spawner).await.unwrap();
     run::run(stack).await;
+}
+
+async fn setup(spawner: &Spawner) -> Result<Stack<'static>, Error> {
+    let (stack, ethernet_runner, network_runner) = hardware::init().await?;
+
+    spawner
+        .spawn(ethernet_task(ethernet_runner))
+        .map_err(|_| Error::SpawnTask)?;
+
+    spawner
+        .spawn(network_task(network_runner))
+        .map_err(|_| Error::SpawnTask)?;
+
+    Ok(stack)
 }
 
 #[embassy_executor::task]
