@@ -1,3 +1,4 @@
+use crate::hardware::board::Board;
 use crate::hardware::error::Error;
 use crate::hardware::wiznet::Runner;
 use embassy_net::udp::UdpSocket;
@@ -8,7 +9,9 @@ pub mod error;
 pub mod network;
 pub mod wiznet;
 
-pub async fn init() -> Result<
+pub async fn init(
+    mut board: Board,
+) -> Result<
     (
         UdpSocket<'static>,
         Runner,
@@ -16,8 +19,6 @@ pub async fn init() -> Result<
     ),
     Error,
 > {
-    let mut board = board::init();
-
     let seed = board.rng.next_u64();
 
     let (device, ethernet_runner) = wiznet::init(board).await?;

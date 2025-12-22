@@ -3,8 +3,10 @@
 
 mod hardware;
 
+use crate::hardware::board::Board;
 use embassy_executor::Spawner;
 use embassy_net::udp::UdpSocket;
+use embassy_rp::gpio::Output;
 use hardware::error::Error;
 use hardware::wiznet;
 use panic_halt as _;
@@ -12,16 +14,22 @@ use w5500_json::relay::relay;
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
-    let socket = setup(&spawner).await.unwrap();
+    let (board, led) = hardware::board::init();
+
+    let socket = match setup(&spawner, board).await {
+        Ok(socket) => socket,
+        Err(_) => setup_error(led),
+    };
 
     let mut buffer = [0; 4096];
+
     loop {
         relay(&socket, &mut buffer).await;
     }
 }
 
-async fn setup(spawner: &Spawner) -> Result<UdpSocket<'static>, Error> {
-    let (socket, ethernet_runner, network_runner) = hardware::init().await?;
+async fn setup(spawner: &Spawner, board: Board) -> Result<UdpSocket<'static>, Error> {
+    let (socket, ethernet_runner, network_runner) = hardware::init(board).await?;
 
     spawner
         .spawn(ethernet_task(ethernet_runner))
@@ -32,6 +40,11 @@ async fn setup(spawner: &Spawner) -> Result<UdpSocket<'static>, Error> {
         .map_err(|_| Error::SpawnTask)?;
 
     Ok(socket)
+}
+
+fn setup_error(mut led: Output<'static>) -> ! {
+    led.set_high();
+    panic!("setup failed")
 }
 
 #[embassy_executor::task]
