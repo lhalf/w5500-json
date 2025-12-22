@@ -1,10 +1,11 @@
 mod common;
 
+use colored::Colorize;
 use common::Connection;
 use std::time::{Duration, Instant};
 
 #[test]
-fn single() {
+fn single_packet() {
     let connection = Connection::new();
 
     let payload = b"{}";
@@ -21,5 +22,5 @@ fn single() {
 
     assert_eq!(received, payload.to_vec());
 
-    println!("{elapsed:?}");
+    print!("{} ", format!("{elapsed:?}").green());
 }
