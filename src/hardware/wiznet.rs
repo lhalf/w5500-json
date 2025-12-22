@@ -25,7 +25,7 @@ pub async fn init(board: Board) -> Result<(Device<'static>, Runner), Error> {
     embassy_net_wiznet::new(
         MAC_ADDRESS,
         STATE.init(State::new()),
-        ExclusiveDevice::new(board.spi, board.cs, Delay).unwrap(),
+        ExclusiveDevice::new(board.spi, board.cs, Delay).map_err(|_| Error::Spi)?,
         board.w5500_int,
         board.w5500_reset,
     )

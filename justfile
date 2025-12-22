@@ -12,4 +12,7 @@ test:
     cargo test --lib --target x86_64-unknown-linux-gnu
 
 e2e-test:
-    cargo test --test e2e --target x86_64-unknown-linux-gnu
+    cargo test --test e2e --target x86_64-unknown-linux-gnu -- --nocapture --test-threads 1
+
+perf-test:
+    cargo test --test performance --target x86_64-unknown-linux-gnu -- --nocapture --test-threads=1
