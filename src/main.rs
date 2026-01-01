@@ -4,12 +4,13 @@
 mod hardware;
 
 use crate::hardware::board::Board;
+use defmt_rtt as _;
 use embassy_executor::Spawner;
 use embassy_net::udp::UdpSocket;
 use embassy_rp::gpio::Output;
 use hardware::error::Error;
 use hardware::wiznet;
-use panic_halt as _;
+use panic_probe as _;
 use w5500_json::relay::relay;
 
 #[embassy_executor::main]

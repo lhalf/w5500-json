@@ -1,8 +1,7 @@
 set shell := ["bash", "-euc"]
 
-build:
-    cargo build --release --all-features
-    elf2uf2-rs target/thumbv6m-none-eabi/release/w5500-json
+flash $DEFMT_LOG="debug":
+    cargo run --release --all-features
 
 check:
     cargo fmt --check --all

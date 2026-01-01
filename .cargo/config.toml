@@ -2,8 +2,10 @@
 target = "thumbv6m-none-eabi"
 
 [target.thumbv6m-none-eabi]
+runner = "probe-rs run --chip RP2040 --chip-erase"
 rustflags = [
     "-C", "link-arg=--nmagic",  # don't use magic page alignment
     "-C", "link-arg=-Tlink.x",  # use a custom linker script
+    "-C", "link-arg=-Tdefmt.x", # tell linker how to handle log data
     "-C", "no-vectorize-loops", # disable LLVM loop vectorization
 ]
