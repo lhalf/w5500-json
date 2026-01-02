@@ -1,6 +1,6 @@
 set shell := ["bash", "-euc"]
 
-flash $DEFMT_LOG="debug":
+flash $DEFMT_LOG="info":
     cargo run --release --all-features
 
 check:

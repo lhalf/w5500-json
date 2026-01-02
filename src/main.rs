@@ -6,7 +6,7 @@ mod hardware;
 use crate::hardware::board::Board;
 use defmt_rtt as _;
 use embassy_executor::Spawner;
-use embassy_net::udp::UdpSocket;
+use embassy_net::raw::RawSocket;
 use embassy_rp::gpio::Output;
 use hardware::error::Error;
 use hardware::wiznet;
@@ -29,7 +29,7 @@ async fn main(spawner: Spawner) {
     }
 }
 
-async fn setup(spawner: &Spawner, board: Board) -> Result<UdpSocket<'static>, Error> {
+async fn setup(spawner: &Spawner, board: Board) -> Result<RawSocket<'static>, Error> {
     let (socket, ethernet_runner, network_runner) = hardware::init(board).await?;
 
     spawner

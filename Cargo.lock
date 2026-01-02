@@ -1480,6 +1480,7 @@ dependencies = [
  "panic-probe",
  "serde",
  "serde-json-core",
+ "smoltcp",
  "static_cell",
  "tokio",
 ]

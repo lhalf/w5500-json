@@ -1,7 +1,7 @@
 use crate::hardware::board::Board;
 use crate::hardware::error::Error;
 use crate::hardware::wiznet::Runner;
-use embassy_net::udp::UdpSocket;
+use embassy_net::raw::RawSocket;
 use embassy_net_wiznet::Device;
 
 pub mod board;
@@ -13,7 +13,7 @@ pub async fn init(
     mut board: Board,
 ) -> Result<
     (
-        UdpSocket<'static>,
+        RawSocket<'static>,
         Runner,
         embassy_net::Runner<'static, Device<'static>>,
     ),
