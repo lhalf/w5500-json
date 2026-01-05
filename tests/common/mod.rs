@@ -1,9 +1,9 @@
-use std::net::UdpSocket;
+use std::net::{Ipv4Addr, UdpSocket};
 use std::sync::atomic::AtomicBool;
 use std::sync::mpsc;
 use std::sync::mpsc::Sender;
 use std::time::Duration;
-use w5500_json::config::{GATEWAY, IP_ADDRESS, PORT};
+use w5500_json::config::{GATEWAY, IP_ADDRESS, PORT, RELAY_PORT};
 
 const TIMEOUT: Duration = Duration::from_millis(10);
 static RECEIVING: AtomicBool = AtomicBool::new(true);
@@ -16,7 +16,7 @@ pub struct Connection {
 
 impl Connection {
     pub fn new() -> Self {
-        let socket = UdpSocket::bind((GATEWAY, 0)).unwrap();
+        let socket = UdpSocket::bind((GATEWAY, RELAY_PORT)).unwrap();
 
         socket.connect((IP_ADDRESS, PORT)).unwrap();
         socket.set_read_timeout(Some(TIMEOUT)).unwrap();

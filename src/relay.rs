@@ -1,6 +1,5 @@
-use crate::config::{RELAY_IP_ADDRESS, RELAY_PORT};
+use crate::config::{IP_ADDRESS, PORT, RELAY_IP_ADDRESS, RELAY_PORT};
 use crate::socket::Socket;
-use core::net::Ipv4Addr;
 use smoltcp::phy::ChecksumCapabilities;
 use smoltcp::wire::{IpProtocol, Ipv4Packet, Ipv4Repr, UdpPacket, UdpRepr};
 
@@ -21,12 +20,12 @@ pub async fn relay<'a>(
 
 fn tx_packet<'a>(buffer: &'a mut [u8; 4096], payload: &'a [u8]) -> &'a [u8] {
     let udp_repr = UdpRepr {
-        src_port: 0,
+        src_port: PORT,
         dst_port: RELAY_PORT,
     };
 
     let ip_repr = Ipv4Repr {
-        src_addr: Ipv4Addr::UNSPECIFIED,
+        src_addr: IP_ADDRESS,
         dst_addr: RELAY_IP_ADDRESS,
         next_header: IpProtocol::Udp,
         payload_len: udp_repr.header_len() + payload.len(),
@@ -45,7 +44,7 @@ fn tx_packet<'a>(buffer: &'a mut [u8; 4096], payload: &'a [u8]) -> &'a [u8] {
 
     udp_repr.emit(
         &mut UdpPacket::new_unchecked(&mut packet_buffer[ip_len..]),
-        &Ipv4Addr::UNSPECIFIED.into(),
+        &IP_ADDRESS.into(),
         &RELAY_IP_ADDRESS.into(),
         payload.len(),
         |buf| buf.copy_from_slice(payload),
