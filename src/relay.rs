@@ -3,7 +3,9 @@ use crate::socket::Socket;
 use smoltcp::phy::ChecksumCapabilities;
 use smoltcp::wire::{IpProtocol, Ipv4Packet, Ipv4Repr, UdpPacket, UdpRepr};
 
-const PAYLOAD_OFFSET: usize = 28;
+const IPV4_HEADER_LEN: usize = 20;
+const UDP_HEADER_LEN: usize = 8;
+const PAYLOAD_OFFSET: usize = IPV4_HEADER_LEN + UDP_HEADER_LEN;
 
 pub async fn relay<'a>(
     socket: &impl Socket<'a>,
